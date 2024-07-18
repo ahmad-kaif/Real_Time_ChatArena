@@ -58,6 +58,7 @@ export const signup = async (req,res) => {
 export const login = async (req,res) => {
     try {
         const {username, password} = req.body;
+        // console.log('Received login request:', { username, password });
         const user = await User.findOne({username});
         if(!user){
             res.status(400).json({error: "Inavlid username"});

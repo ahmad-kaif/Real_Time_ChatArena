@@ -51,7 +51,7 @@ export const sendMessage = async (req,res) => {
 export const getMessages = async (req,res) => {
     try {
         
-        const {id:userToChatId} = req.params;
+        const { id: userToChatId } = req.params;
         // console.log(`helooo`,req.params);
         const senderId = req.user._id;
         // console.log(senderId);
@@ -62,14 +62,12 @@ export const getMessages = async (req,res) => {
         // console.log(conversation)
 
         if (!conversation) {
-            return res.status(404).json({ error: "Conversation in get message controller  not found" });
+            return res.status(200).json([]);
         }
 
         const messages = conversation.messages;
 
-        res.status(200).json(conversation.messages);
-
-
+        res.status(200).json(messages);
     } catch (error) {
         console.log("Error in getmessage controller", error.message)
         res.status(500).json({error:"Internal server error"})
