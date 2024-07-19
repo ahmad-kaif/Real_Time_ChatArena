@@ -1,40 +1,42 @@
-import React, { useEffect, useRef } from 'react'
-import Message from './Message'
-import useGetMessages from '../../hooks/useGetMessages'
+import React, { useEffect, useRef } from 'react';
+import Message from './Message';
+import useGetMessages from '../../hooks/useGetMessages';
 import MessageSkeleton from '../skeltons/MessageSkeleton';
-
+import useListenMessages from '../../hooks/useListenMessages';
 
 const Messages = () => {
-  const {messages,loading} = useGetMessages();
+  const { messages, loading } = useGetMessages();
   // console.log("MESSAGES", messages);
+  // messages.forEach(message => console.log(message._id));
 
-  const lastMesaageref = useRef();
+  useListenMessages();
 
-  useEffect(() =>{
-    setTimeout(() => {
-      lastMesaageref.current?.scrollIntoView({behavior : "smooth"});
+  const lastMessageRef = useRef();
+
+  useEffect(() => {
+    setTimeout(()=>{
+        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+        // console.log("auto scorlling working")
     },100)
-  },[messages])
-  
+  }, [messages]);
+
   return (
     <div className='px-4 flex-1 overflow-auto'>
       {!loading && 
-        messages.length > 0 && 
+        messages.length > 0 &&
         messages.map((message) => (
-          <div key={message._id}
-            ref={lastMesaageref}
-          >
-            <Message  message={message}/>
+          <div key={message._id} ref={lastMessageRef}>
+            <Message message={message}  />
           </div>
-        )) }
+        ))}
 
       {loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
 
       {!loading && messages.length === 0 && (
         <p className='text-center'>Send a message to start the conversation</p>
       )}
-
     </div>
-  )
-}
-export default Messages
+  );
+};
+
+export default Messages;
