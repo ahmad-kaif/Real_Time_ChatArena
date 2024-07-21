@@ -13,7 +13,7 @@ ChatArena is a robust and fully functional chat application built using the MERN
 
 ## Technologies Used
 
-- **MongoDB**: NoSQL database for storing user and message data.
+- **MongoDB**: database for storing user and message data.
 - **Express**: Web framework for Node.js to handle server-side logic.
 - **React**: Frontend library for building the user interface.
 - **Node.js**: JavaScript runtime for the backend server.
