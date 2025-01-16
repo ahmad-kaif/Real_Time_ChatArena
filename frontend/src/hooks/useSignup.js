@@ -30,7 +30,7 @@ const useSignup = () => {
         } catch (error) {
             toast.error(`Error in useSignup`,error.message);
         }finally{
-            setLoading(false)
+            setLoading(false);
         }
     }
     return {loading, signup};
