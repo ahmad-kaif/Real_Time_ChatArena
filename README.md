@@ -1,9 +1,10 @@
 # ChatArena
 
-ChatArena is a robust and fully functional chat application built using the MERN stack (MongoDB, Express, React, Node.js).
+ChatArena is a robust and fully functional AI Powered Chat Application built using the MERN stack (MongoDB, Express, React, Node.js) and Socket.Io.
 
 ## Features
 
+- **AI Assistance**: Users can talk to AI Amigo anytime.
 - **Real-Time Messaging**: Users can send and receive messages instantly using Socket.io.
 - **Online Status Updates**: See who is online in real-time.
 - **User Authentication**: Secure login, signup, and logout functionality using JWT, Cookie Parser, and bcrypt for password hashing.
@@ -24,6 +25,7 @@ ChatArena is a robust and fully functional chat application built using the MERN
 - **Tailwind CSS**: Utility-first CSS framework for styling.
 - **DaisyUI**: Component library for Tailwind CSS to quickly build beautiful UIs.
 - **react-toaster**: Library for displaying toast notifications.
+- **Gemini-API**: Integarting Chat Bot, model: "gemini-2.0-flash".
 
 ## Deployment
 
