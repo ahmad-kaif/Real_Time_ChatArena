@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { FaSearchengin } from "react-icons/fa6";
 import useConversation from '../../zustand/useConversation';
 import useGetConversations from '../../hooks/useGetConversations'
@@ -28,13 +28,13 @@ const SearchInput = () => {
 
 
   return (
-    <div>
+    <div >
       <form  className='flex items-center gap-2' onSubmit={handleSubmit} >
-        <input type="text" placeholder='Search...' className='input input-bordered rounded-full'
+        <input type="text" placeholder='Search...' className='w-[80%] input input-bordered rounded-full'
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         />
-        <button type='submit' className='btn btn-circle bg-blue-500 text-white'>
+        <button type='submit' className='w-[30%]  btn btn-circle bg-blue-500 text-white'>
         <FaSearchengin className='w-6 h-6 outline-none' />
         </button>
       </form>

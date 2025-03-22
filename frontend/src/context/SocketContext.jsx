@@ -18,9 +18,9 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-        const socket = io(socketUrl, {
-            query: { userId: authUser._id },
-          });
+      const socket = io(socketUrl, {
+        query: { userId: authUser._id },
+      });
 
       setSocket(socket);
 
@@ -28,7 +28,23 @@ export const SocketContextProvider = ({ children }) => {
         setOnlineUsers(users);
       });
 
-      return () => socket.close();
+      // Listen for the "receiveMessage" event
+      socket.on("receiveMessage", (data) => {
+        if (data.type === "image") {
+          // Handle image message
+          console.log("Received image URL:", data.content);
+          // Render image as an <img> tag in the UI
+        } else {
+          // Handle text message
+          console.log("Received text message:", data.content);
+        }
+      });
+
+      // Cleanup when socket disconnects
+      return () => {
+        socket.off("receiveMessage"); // Unsubscribe from event when component unmounts
+        socket.close();
+      };
     } else {
       if (socket) {
         socket.close();
@@ -39,8 +55,7 @@ export const SocketContextProvider = ({ children }) => {
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
-      {" "}
-      {children}{" "}
+      {children}
     </SocketContext.Provider>
   );
 };

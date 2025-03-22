@@ -1,11 +1,20 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 
 const useConversation = create((set) => ({
+  messages: [],
+  selectedConversation: null, // Initially no conversation selected
+  setMessages: (newMessages) => set({ messages: newMessages }),
 
-    selectedConversation: null,
-    setSelectedConversation: (selectedConversation) => set ({selectedConversation}),
-    messages: [],
-    setMessages: (messages) => set({messages}),
-}))
+  setSelectedConversation: (conversation) => {
+    if (!conversation) return;
+    if (conversation.name === "AI Assistant") {
+      set({
+        selectedConversation: { ...conversation, _id: "ai_bot", isAI: true },
+      });
+    } else {
+      set({ selectedConversation: conversation });
+    }
+  },
+}));
 
 export default useConversation;
