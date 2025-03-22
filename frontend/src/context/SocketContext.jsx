@@ -14,36 +14,35 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuthContext();
 
   const socketUrl =
-    process.env.NODE_ENV === "development" ? "http://localhost:5000" : "https://chatarena-frpx.onrender.com";
+    import.meta.NODE_ENV === "development"
+      ? "http://localhost:5000"
+      : "https://chatarena-frpx.onrender.com";
 
   useEffect(() => {
     if (authUser) {
-      const socket = io(socketUrl, {
+      const newSocket = io(socketUrl, {
         query: { userId: authUser._id },
       });
 
-      setSocket(socket);
+      setSocket(newSocket);
 
-      socket.on("getOnlineUsers", (users) => {
+      newSocket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
 
-      // Listen for the "receiveMessage" event
-      socket.on("receiveMessage", (data) => {
+      newSocket.on("receiveMessage", (data) => {
         if (data.type === "image") {
-          // Handle image message
           console.log("Received image URL:", data.content);
-          // Render image as an <img> tag in the UI
         } else {
-          // Handle text message
           console.log("Received text message:", data.content);
         }
       });
 
-      // Cleanup when socket disconnects
+      // Cleanup when component unmounts
       return () => {
-        socket.off("receiveMessage"); // Unsubscribe from event when component unmounts
-        socket.close();
+        newSocket.off("getOnlineUsers");
+        newSocket.off("receiveMessage");
+        newSocket.close();
       };
     } else {
       if (socket) {
