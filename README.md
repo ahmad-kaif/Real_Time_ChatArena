@@ -17,9 +17,11 @@ ChatArena is a robust and fully functional AI Powered Chat Application built usi
 - **MongoDB**: database for storing user and message data.
 - **Express**: Web framework for Node.js to handle server-side logic.
 - **React**: Frontend library for building the user interface.
+- **Zustand**: Global state Management.
 - **Node.js**: JavaScript runtime for the backend server.
 - **Socket.io**: Library for real-time, bidirectional communication.
 - **JWT**: JSON Web Tokens for authentication and secure sessions.
+- **Http only Cookies**: No session storage, JWT is store in Http cookies only.
 - **Cookie Parser**: Middleware for handling cookies.
 - **bcrypt**: Library for hashing passwords.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
