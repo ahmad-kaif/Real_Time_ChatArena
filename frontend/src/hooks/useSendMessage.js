@@ -8,8 +8,8 @@ const useSendMessage = () => {
   const { messages, setMessages, selectedConversation } = useConversation();
   const { authUser } = useAuthContext();
 
-  const sendMessage = async (message) => {
-    if (!message.trim()) {
+  const sendMessage = async (message, file = null) => {
+    if (!message.trim() && !file) {
       toast.error("Message cannot be empty");
       return;
     }
@@ -17,10 +17,11 @@ const useSendMessage = () => {
     setLoading(true);
     try {
       if (selectedConversation?.isAI) {
+        // AI chat only supports text messages
         const res = await fetch(`/api/ai-chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }) // Sending only the message
+          body: JSON.stringify({ message }),
         });
 
         const data = await res.json();
@@ -28,14 +29,21 @@ const useSendMessage = () => {
 
         setMessages([
           ...messages,
-          { senderId: authUser._id, message }, // User's message
-          { senderId: "ai", message: data.message || "No response from AI" } // AI response
+          { senderId: authUser._id, message }, // User message
+          { senderId: "ai", message: data.message || "No response from AI" }, // AI response
         ]);
       } else {
+        // Regular chat: Send text + file (if any)
+        const formData = new FormData();
+        formData.append("message", message);
+        formData.append("senderId", authUser._id);
+        if (file) {
+          formData.append("file", file);
+        }
+
         const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, senderId: authUser._id }),
+          body: formData, // Use FormData instead of JSON
         });
 
         if (!res.ok) {

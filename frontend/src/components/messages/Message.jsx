@@ -16,12 +16,13 @@ const Message = ({ message }) => {
   const chatClassName = fromMe ? "chat-end" : "chat-start";
 
   // Profile picture assignment
-  const profilePic = fromMe
-    ? authUser.profilePic
-    : isAI
-    ? "/ai-img.jpg"
-    : selectedConversation?.profilePic ||
-      `https://api.dicebear.com/7.x/identicon/svg?seed=${selectedConversation?.username}`;
+  const profilePic =
+    fromMe
+      ? authUser.profilePic || "/default-avatar.png"
+      : isAI
+      ? "/ai-img.jpg"
+      : selectedConversation?.profilePic ||
+        `https://api.dicebear.com/7.x/identicon/svg?seed=${selectedConversation?.username}`;
 
   // Background color for different message types
   const bubbleBgColor = fromMe
@@ -33,28 +34,39 @@ const Message = ({ message }) => {
   // Apply shake effect if needed
   const shakeClass = message.shouldShake ? "shake" : "";
 
-  // Extract formatted time
-  const formattedTime = extractTime(message.createdAt);
+  // Extract formatted time (handle missing `createdAt`)
+  const formattedTime = message.createdAt ? extractTime(message.createdAt) : "Just now";
 
   return (
     <div className={`chat ${chatClassName}`}>
+      {/* Profile Picture */}
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
           <img
             src={profilePic}
             alt="Profile"
-            onError={(e) => {
-              e.target.onerror = null; // Prevent infinite loop
-              e.target.src = "/default-avatar.png"; // Fallback image
-            }}
+            onError={(e) => (e.target.src = "/default-avatar.png")}
           />
         </div>
       </div>
-      <div
-        className={`chat-bubble text-white ${bubbleBgColor} ${shakeClass} pb-2`}
-      >
-        {message.message}
+
+      {/* Message Content */}
+      <div className={`chat-bubble text-white ${bubbleBgColor} ${shakeClass} pb-2`}>
+        {/* Show Image if present */}
+        {message.fileUrl ? (
+          <img
+            src={message.fileUrl}
+            alt="Sent file"
+            className="w-40 h-auto rounded-lg mt-1"
+            onError={(e) => (e.target.style.display = "none")}
+          />
+        ) : null}
+
+        {/* Show Text Message */}
+        {message.message || "📷 Sent an image"}
       </div>
+
+      {/* Message Time */}
       <div className="chat-footer opacity-50 text-xs flex gap-1 items-center">
         {formattedTime}
       </div>

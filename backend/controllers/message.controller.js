@@ -3,47 +3,50 @@ import Message from "../models/message.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
-    try {
-      const { message, type } = req.body; // Make sure to include type (text/image)
-      const { id: receiverId } = req.params;
-      const senderId = req.user._id;
-  
-      let conversation = await Conversation.findOne({
-        participants: {
-          $all: [senderId, receiverId],
-        },
+  try {
+    const { message, type, fileUrl } = req.body; // ✅ Extract fileUrl from body
+    let { id: receiverId } = req.params;
+    const senderId = req.user._id;
+
+    receiverId = receiverId.trim();
+
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId],
       });
-      if (!conversation) {
-        conversation = await Conversation.create({
-          participants: [senderId, receiverId],
-        });
-      }
-  
-      const newMessage = new Message({
-        senderId,
-        receiverId,
-        message,
-        type: type || 'text', // Handle text or image type
-      });
-  
-      if (newMessage) {
-        conversation.messages.push(newMessage._id);
-      }
-  
-      await Promise.all([conversation.save(), newMessage.save()]);
-  
-      // SOCKET IO functionality
-      const receiverSocketId = getReceiverSocketId(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit('newMessage', newMessage);
-      }
-  
-      res.status(201).json(newMessage);
-    } catch (error) {
-      console.log('Error in message controller', error.message);
-      res.status(500).json({ error: 'Internal server error' });
     }
-  };
+
+    // ✅ Correctly handle both text and file messages
+    const newMessage = new Message({
+      senderId,
+      receiverId,
+      message: message || "", // Default empty string for file messages
+      fileUrl: fileUrl || null, // Store file URL if provided
+    });
+
+    if (newMessage) {
+      conversation.messages.push(newMessage._id);
+    }
+
+    await Promise.all([conversation.save(), newMessage.save()]);
+
+    // ✅ SOCKET.IO functionality
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.log("Error in message controller", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
   
 
 export const getMessages = async (req,res) => {

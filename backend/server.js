@@ -22,7 +22,10 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/ai-chat", aiChatRoutes); // <-- Add this line
+app.use("/api/ai-chat", aiChatRoutes); 
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
