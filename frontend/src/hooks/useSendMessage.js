@@ -38,20 +38,24 @@ const useSendMessage = () => {
         formData.append("message", message);
         formData.append("senderId", authUser._id);
         if (file) {
+          console.log("File being sent:", file); // Debugging file before sending
           formData.append("file", file);
         }
 
-        const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
-          method: "POST",
-          body: formData, // Use FormData instead of JSON
-        });
+        const res = await fetch(
+          `/api/messages/send/${selectedConversation._id}`,
+          {
+            method: "POST",
+            body: formData, // Use FormData instead of JSON
+          }
+        );
 
         if (!res.ok) {
           const errorData = await res.json();
           throw new Error(errorData.error || "Failed to send message");
         }
-
         const data = await res.json();
+        // console.log("Response from backend:", data);
         setMessages([...messages, data]);
       }
     } catch (error) {

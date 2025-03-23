@@ -14,7 +14,7 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuthContext();
 
   const socketUrl =
-    import.meta.NODE_ENV === "development"
+    import.meta.env.NODE_ENV === "development"
       ? "http://localhost:5000"
       : "https://chatarena-frpx.onrender.com";
 

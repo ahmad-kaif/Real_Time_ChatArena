@@ -4,10 +4,11 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
   try {
-    const { message, type, fileUrl } = req.body; // ✅ Extract fileUrl from body
+    // console.log("Request body:", req.body);
+    // console.log("Uploaded file:", req.file); // Check if file is received
+
     let { id: receiverId } = req.params;
     const senderId = req.user._id;
-
     receiverId = receiverId.trim();
 
     let conversation = await Conversation.findOne({
@@ -20,12 +21,18 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    // ✅ Correctly handle both text and file messages
+    // Process file upload if exists
+    let fileUrl = null;
+    if (req.file) {
+      fileUrl = `/uploads/${req.file.filename}`; // Save file path
+    }
+
+    // Create a new message with text or file
     const newMessage = new Message({
       senderId,
       receiverId,
-      message: message || "", // Default empty string for file messages
-      fileUrl: fileUrl || null, // Store file URL if provided
+      message: req.body.message || "", // Empty if only file is sent
+      fileUrl, // Store file URL if uploaded
     });
 
     if (newMessage) {
@@ -34,7 +41,7 @@ export const sendMessage = async (req, res) => {
 
     await Promise.all([conversation.save(), newMessage.save()]);
 
-    // ✅ SOCKET.IO functionality
+    // Send the message via Socket.io
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
@@ -46,6 +53,7 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
   
 
