@@ -20,7 +20,7 @@ export const getReceiverSocketId = (receiverId) => {
 
 
 io.on('connection', (socket) => {
-    console.log("A user connected", socket.id);
+    // console.log("A user connected", socket.id);
 
     const userId = socket.handshake.query.userId;
     if(userId != "undefined"){
@@ -29,10 +29,17 @@ io.on('connection', (socket) => {
 
     //io.emit() is used to send events to all the connected clients
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+    socket.on("sendFile", ({ senderId, receiverId, fileUrl }) => {
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("receiveFile", { senderId, fileUrl });
+        }
+    });
     
     // Listen for the disconnect event
     socket.on("disconnect", () => {
-        console.log("user disconnected", socket.id);
+        // console.log("user disconnected", socket.id);
         delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
 

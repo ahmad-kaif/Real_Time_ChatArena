@@ -14,12 +14,17 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuthContext();
 
   const socketUrl =
-    import.meta.env.NODE_ENV === "development"
+    import.meta.env.MODE === "development"
       ? "http://localhost:5000"
       : "https://chatarena-frpx.onrender.com";
 
   useEffect(() => {
     if (authUser) {
+      // Close any existing socket before creating a new one
+      if (socket) {
+        socket.close();
+      }
+
       const newSocket = io(socketUrl, {
         query: { userId: authUser._id },
       });
@@ -31,14 +36,19 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       newSocket.on("receiveMessage", (data) => {
-        if (data.type === "image") {
-          console.log("Received image URL:", data.content);
-        } else {
-          console.log("Received text message:", data.content);
-        }
+        console.log(
+          data.type === "image"
+            ? "Received image URL: " + data.content
+            : "Received text message: " + data.content
+        );
       });
 
-      // Cleanup when component unmounts
+      // Listen for file messages
+      newSocket.on("receiveFile", (data) => {
+        console.log("Received file:", data.fileUrl);
+        // Update state to display the file in UI
+      });
+
       return () => {
         newSocket.off("getOnlineUsers");
         newSocket.off("receiveMessage");
@@ -50,7 +60,7 @@ export const SocketContextProvider = ({ children }) => {
         setSocket(null);
       }
     }
-  }, [authUser]);
+  }, [authUser]); // Dependency array
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
