@@ -22,7 +22,8 @@ app.use(express.urlencoded({ extended: true })); // Ensure form data is parsed
 app.use(express.json()); // JSON parsing (must come AFTER multer)
 app.use(cookieParser());
 // Serve frontend build files
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
+app.use(express.static(path.resolve("frontend", "dist")));
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
@@ -32,8 +33,6 @@ app.use("/api/ai-chat", aiChatRoutes);
 // import uploadRoutes from "./routes/upload.routes.js";  // <-- Import this
 
 // app.use("/api/upload", uploadRoutes);  // <-- Add this
-
-
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
