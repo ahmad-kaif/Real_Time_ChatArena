@@ -7,10 +7,11 @@ ChatArena is a robust and fully functional AI Powered Chat Application built usi
 - **AI Assistance**: Users can talk to AI Amigo anytime.
 - **Real-Time Messaging**: Users can send and receive messages instantly using Socket.io.
 - **Online Status Updates**: See who is online in real-time.
+- **File Sharing**: Allow users to share files within the chat.
 - **User Authentication**: Secure login, signup, and logout functionality using JWT, Cookie Parser, and bcrypt for password hashing.
 - **Responsive Design**: A smooth and intuitive interface using Tailwind CSS and DaisyUI.
 - **Toast Notifications**: User feedback through react-toaster for messages and alerts.
-- **File Sharing**: [Planned Feature] Allow users to share files within the chat.
+
 
 ## Technologies Used
 
